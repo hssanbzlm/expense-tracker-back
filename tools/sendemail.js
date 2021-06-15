@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 const config = require("../config/index");
-////nodemailer
 function nodeMailerCreateTransport(auth, service) {
   return nodemailer.createTransport({
     auth: auth,
@@ -24,5 +23,4 @@ function nodeMailerSendEmail(message) {
     }
   });
 }
-///nodemailer
 module.exports.sendMail = nodeMailerSendEmail;
