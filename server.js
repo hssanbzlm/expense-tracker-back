@@ -6,7 +6,6 @@ const connectDb = require("./utils/db");
 const userRouter = require("./ressources/user/user.router");
 app.use(cors());
 app.use(express.json());
-
 app.use("/user", userRouter);
 
 module.exports.start = async () => {
