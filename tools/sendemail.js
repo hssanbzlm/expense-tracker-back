@@ -1,26 +1,10 @@
 const nodemailer = require("nodemailer");
 const config = require("../config/index");
-function nodeMailerCreateTransport(auth, service) {
+function nodeMailerCreateTransport() {
   return nodemailer.createTransport({
-    auth: auth,
-    service: service,
+    auth: { user: config.sendEmail, pass: config.emailPassword },
+    service: "Gmail",
   });
 }
 
-function nodeMailerSendEmail(message) {
-  nodeMailerCreateTransport(
-    {
-      user: config.sendEmail,
-      pass: config.emailPassword,
-    },
-    "Gmail"
-  ).sendMail(message, (err, info) => {
-    if (err) {
-      console.log("Error sending email " + err.message);
-    }
-    if (info) {
-      console.log(info);
-    }
-  });
-}
-module.exports.sendMail = nodeMailerSendEmail;
+module.exports.nodeMailerCreateTransport = nodeMailerCreateTransport;
