@@ -3,6 +3,7 @@ const token = require("../../tools/token");
 const nodeMailerCreateTransport =
   require("../../tools/sendemail").nodeMailerCreateTransport;
 const config = require("../../config");
+const { v4: uuidv4 } = require("uuid");
 
 module.exports.login = async (req, res) => {
   const user = req.body;
@@ -38,27 +39,30 @@ module.exports.checkUserExistence = (req, res, next) => {
 };
 
 module.exports.senEmailVerification = (req, res, next) => {
+  const codeVerif = uuidv4();
   nodeMailerCreateTransport().sendMail(
     {
       from: config.sendEmail,
       to: req.body.email,
       subject: "Email verification",
-      text: "<b>Hello</b>",
+      text: `Click this link to verify your email: ${config.frontAppVerif}${codeVerif}`,
     },
     (err, info) => {
       if (err) res.status(404).send({ err: err });
-      if (info) {
+      else if (info) {
+        req.codeVerif = codeVerif;
         next();
       }
     }
   );
 };
 
-module.exports.saveUser = async (req, res) => {
+module.exports.saveUser = async (req, res, next) => {
   try {
     const user = new userModel(req.body);
-    await user.save();
-    res.status(200).send({ succe: "succe" });
+    const u = await user.save();
+    req.idUser = u._id;
+    next();
   } catch (e) {
     res.status(404).send({ err: e });
   }

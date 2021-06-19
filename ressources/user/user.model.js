@@ -16,7 +16,7 @@ userShema.pre("save", function (next) {
       return next(err);
     }
     user.password = hash;
-    return next();
+    next();
   });
 });
 
