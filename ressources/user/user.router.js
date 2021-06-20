@@ -10,6 +10,11 @@ router.post(
   userController.saveUser,
   settingController.saveSettings
 );
+router.get(
+  "/verifemail/:code",
+  userController.verifCode,
+  userController.activateUser
+);
 //save settings: saving user id + user code verification (sent with email) in setting document
 
 module.exports = router;

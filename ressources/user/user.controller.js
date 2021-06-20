@@ -4,11 +4,14 @@ const nodeMailerCreateTransport =
   require("../../tools/sendemail").nodeMailerCreateTransport;
 const config = require("../../config");
 const { v4: uuidv4 } = require("uuid");
+const settingModel = require("../setting/setting.model");
 
 module.exports.login = async (req, res) => {
   const user = req.body;
   try {
-    const u = await userModel.findOne({ email: user.email }).exec();
+    const u = await userModel
+      .findOne({ email: user.email, active: true })
+      .exec();
     if (u) {
       u.checkPassword(user.password).then(
         (onSucced) => {
@@ -66,4 +69,30 @@ module.exports.saveUser = async (req, res, next) => {
   } catch (e) {
     res.status(404).send({ err: e });
   }
+};
+
+module.exports.verifCode = (req, res, next) => {
+  const code = req.params.code;
+  settingModel.findOneAndRemove({ verifCode: code }, (err, setting) => {
+    if (setting) {
+      req.idUser = setting.idUser;
+      next();
+    }
+    if (err) {
+      res.status(404).send({ err });
+    }
+  });
+};
+
+module.exports.activateUser = (req, res) => {
+  const idUser = req.idUser;
+  userModel.findByIdAndUpdate(
+    idUser,
+    { active: true },
+    { new: true },
+    (err, user) => {
+      if (err) res.status(404).send({ err });
+      if (user) res.status(200).json(user);
+    }
+  );
 };
