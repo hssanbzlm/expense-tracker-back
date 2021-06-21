@@ -5,7 +5,11 @@ const userShema = new mongoose.Schema({
   name: String,
   lastName: String,
   password: String,
-  active: Boolean,
+  active: {
+    type: Boolean,
+    default: false,
+  },
+  expenses: [{ type: mongoose.Schema.Types.ObjectId, ref: "expenses" }],
 });
 
 userShema.pre("save", function (next) {
