@@ -29,7 +29,7 @@ module.exports.addExpense = async (req, res, next) => {
   expense.createdBy = req.idUser;
   try {
     const ex = await expense.save();
-    req.expenseId = ex._id;
+    req.expense = ex;
     next();
   } catch (err) {
     res.status(404).send({ err: err });
@@ -37,14 +37,15 @@ module.exports.addExpense = async (req, res, next) => {
 };
 module.exports.addExpenseIdToUser = (req, res) => {
   const idUser = req.idUser;
-  const expenseId = req.expenseId;
+  const expenseId = req.expense._id;
+
   userModel.findByIdAndUpdate(
     idUser,
     { $push: { expenses: expenseId } },
     { new: true },
     (err, user) => {
       if (err) res.status(404).send({ err: err });
-      if (user) res.status(200).json(user);
+      if (user) res.status(200).json(req.expense);
     }
   );
 };
@@ -75,14 +76,18 @@ module.exports.deleteIdExpenseFromUser = (req, res) => {
 };
 
 module.exports.updateExpense = (req, res) => {
-  const expenseId = req.body.expenseId;
+  const expenseId = req.body._id;
   expenseModel.findByIdAndUpdate(
     expenseId,
     req.body,
     { new: true },
     (err, expense) => {
       if (err) res.status(404).send({ err: err });
-      if (expense) res.status(200).json(expense);
+      if (expense) {
+        res.status(200).json(expense);
+      } else {
+        res.status(404).send({ err: "error while updating" });
+      }
     }
   );
 };
