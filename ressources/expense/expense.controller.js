@@ -38,7 +38,6 @@ module.exports.addExpense = async (req, res, next) => {
 module.exports.addExpenseIdToUser = (req, res) => {
   const idUser = req.idUser;
   const expenseId = req.expense._id;
-
   userModel.findByIdAndUpdate(
     idUser,
     { $push: { expenses: expenseId } },
