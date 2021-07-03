@@ -55,7 +55,7 @@ module.exports.verifCode = (req, res, next) => {
 };
 
 module.exports.checkResetCodeSent = (req, res, next) => {
-  const idUser = req.body.idUser;
+  const idUser = req.userId;
   settingModel.findOne({ idUser: idUser }, (err, settDoc) => {
     if (err) res.status(404).send({ err: err });
     if (settDoc) {
@@ -86,7 +86,7 @@ module.exports.sendResetCodeEmail = (req, res, next) => {
 };
 
 module.exports.addResetCodeSetting = async (req, res) => {
-  const idUser = req.body.idUser;
+  const idUser = req.userId;
   const resetCode = req.resetCode;
   const setting = new settingModel({
     idUser: idUser,

@@ -37,12 +37,13 @@ module.exports.checkUserExistence = (req, res, next) => {
   });
 };
 
-module.exports.isUserActive = (req, res) => {
+module.exports.isUserActive = (req, res, next) => {
   const email = req.body.email;
   userModel.findOne({ email: email, active: true }, (err, userDoc) => {
     if (err) res.status(404).send({ err: err });
     if (userDoc) {
-      res.status(200).send({ userId: userDoc._id });
+      req.userId = userDoc._id;
+      next();
     } else {
       res.status(404).send({ msg: "user is not active" });
     }

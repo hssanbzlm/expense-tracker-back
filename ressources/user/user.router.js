@@ -14,7 +14,6 @@ router.get(
   settingController.verifCode,
   userController.activateUser
 );
-router.get("/checkUserActive", userController.isUserActive); //is the user even active?
 router.post("/updateUser", userController.findUser, userController.updateUser);
 
 //save settings: saving user id + user code verification (sent with email) in setting document
