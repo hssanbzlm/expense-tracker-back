@@ -20,7 +20,8 @@ module.exports.getExpense = (req, res) => {
   const expenseId = req.params.expenseId;
   expenseModel.findById(expenseId, (err, expense) => {
     if (err) res.status(404).send({ err: err });
-    if (expense) res.status(200).json(expense);
+    else if (expense) res.status(200).json(expense);
+    else res.stat(404).send({ err: "not found" });
   });
 };
 
@@ -37,14 +38,15 @@ module.exports.addExpense = async (req, res, next) => {
 };
 module.exports.addExpenseIdToUser = (req, res) => {
   const idUser = req.idUser;
-  const expenseId = req.expense._id;
+  const expenseId = req.expense;
   userModel.findByIdAndUpdate(
     idUser,
     { $push: { expenses: expenseId } },
     { new: true },
     (err, user) => {
       if (err) res.status(404).send({ err: err });
-      if (user) res.status(200).json(req.expense);
+      else if (user) res.status(200).json(req.expense);
+      else res.status(404).send({ err: "not found" });
     }
   );
 };
@@ -55,8 +57,8 @@ module.exports.deleteExpense = (req, res, next) => {
     if (expense) {
       req.idExpense = expense._id;
       next();
-    }
-    if (err) res.status(404).send({ err: err });
+    } else if (err) res.status(404).send({ err: err });
+    else res.status(404).send({ err: "not found" });
   });
 };
 
@@ -69,7 +71,8 @@ module.exports.deleteIdExpenseFromUser = (req, res) => {
     { new: true },
     (err, user) => {
       if (err) res.status(404).send({ err: err });
-      if (user) res.status(200).json(user);
+      else if (user) res.status(200).json(user);
+      else res.status(404).send({ err: "not found" });
     }
   );
 };

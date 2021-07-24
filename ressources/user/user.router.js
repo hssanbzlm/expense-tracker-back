@@ -14,7 +14,11 @@ router.get(
   settingController.verifCode,
   userController.activateUser
 );
-router.post("/updateUser", userController.findUser, userController.updateUser);
+router.post(
+  "/updatepassword",
+  userController.findUser,
+  userController.updateUser
+);
 
 //save settings: saving user id + user code verification (sent with email) in setting document
 

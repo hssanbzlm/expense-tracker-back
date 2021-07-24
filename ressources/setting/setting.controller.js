@@ -47,10 +47,9 @@ module.exports.verifCode = (req, res, next) => {
     if (setting) {
       req.idUser = setting.idUser;
       next();
-    }
-    if (err) {
+    } else if (err) {
       res.status(404).send({ err });
-    }
+    } else res.status(404).send({ err: "not found" });
   });
 };
 
@@ -102,12 +101,12 @@ module.exports.addResetCodeSetting = async (req, res) => {
 
 module.exports.checkResetCode = (req, res) => {
   const resetCode = req.params.resetcode;
-  const idUser = req.body.idUser;
+  const idUser = req.userId;
   settingModel.findOneAndDelete(
     { resetPasswordCode: resetCode, idUser: idUser },
     (err, setting) => {
       if (err) res.status(404).send({ err: err });
-      if (setting) res.status(200).send({ succe: "succee" });
+      else if (setting) res.status(200).send({ succe: "succee" });
       else res.status(404).send({ error: "not found" });
     }
   );

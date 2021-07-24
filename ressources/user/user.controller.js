@@ -40,7 +40,9 @@ module.exports.checkUserExistence = (req, res, next) => {
 module.exports.isUserActive = (req, res, next) => {
   const email = req.body.email;
   userModel.findOne({ email: email, active: true }, (err, userDoc) => {
-    if (err) res.status(404).send({ err: err });
+    if (err) {
+      res.status(404).send({ err: err });
+    }
     if (userDoc) {
       req.userId = userDoc._id;
       next();
@@ -69,14 +71,15 @@ module.exports.activateUser = (req, res) => {
     { new: true },
     (err, user) => {
       if (err) res.status(404).send({ err });
-      if (user) res.status(200).json(user);
+      else if (user) res.status(200).json(user);
+      else res.status(404).send({ err: "not found" });
     }
   );
 };
 
 module.exports.findUser = (req, res, next) => {
-  const idUser = req.body.idUser;
-  userModel.findById(idUser, (err, userDoc) => {
+  const email = req.body.email;
+  userModel.findOne({ email: email }, (err, userDoc) => {
     if (err) {
       res.status(404).send({ err: err });
     }
