@@ -1,5 +1,5 @@
 const merge = require("lodash").merge;
-const env = process.env.Node_ENV || "development";
+const env = process.env.NODE_ENV || "development";
 
 const baseConfig = {
   env,
