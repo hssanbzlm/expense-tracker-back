@@ -2,6 +2,7 @@ const merge = require("lodash").merge;
 const env = process.env.Node_ENV || "development";
 
 const baseConfig = {
+  env,
   sendEmail: process.env.sendEmail,
   emailPassword: process.env.emailPassword,
   jwtKey: process.env.jwtKey,

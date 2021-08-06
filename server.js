@@ -20,6 +20,7 @@ module.exports.start = async () => {
   try {
     await connectDb();
     app.listen(envConfig.port, () => {
+      console.log(envConfig.env);
       console.log(`I'm listening on port ${envConfig.port}`);
     });
   } catch (e) {
