@@ -5,7 +5,6 @@ const baseConfig = {
   env,
   sendEmail: process.env.sendEmail,
   emailPassword: process.env.emailPassword,
-  jwtKey: process.env.jwtKey,
   jwtExp: "100d",
 }; // maybe we add some base config
 let envConfig = {};
