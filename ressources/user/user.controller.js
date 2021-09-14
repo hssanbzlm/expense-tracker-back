@@ -1,6 +1,6 @@
 const userModel = require("./user.model");
 const token = require("../../tools/token");
-
+const redisClient = require("../../utils/redis").redisClient;
 module.exports.login = async (req, res) => {
   const user = req.body;
   try {
