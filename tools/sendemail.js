@@ -4,6 +4,9 @@ function nodeMailerCreateTransport() {
   return nodemailer.createTransport({
     auth: { user: config.sendEmail, pass: config.emailPassword },
     service: "Gmail",
+    tls: {
+      rejectUnauthorized: false,
+    },
   });
 }
 
