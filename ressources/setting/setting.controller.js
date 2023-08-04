@@ -37,7 +37,7 @@ module.exports.senEmailVerification = (req, res, next) => {
       }
     );
   } else {
-    res.status(200).send({ msg: "you have already an account" });
+    res.status(400).send({ msg: "you have already an account" });
   }
 };
 
