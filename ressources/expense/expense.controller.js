@@ -21,7 +21,7 @@ module.exports.getExpense = (req, res) => {
   expenseModel.findById(expenseId, (err, expense) => {
     if (err) res.status(404).send({ err: err });
     else if (expense) res.status(200).json(expense);
-    else res.stat(404).send({ err: "not found" });
+    else res.status(404).send({ err: "not found" });
   });
 };
 
