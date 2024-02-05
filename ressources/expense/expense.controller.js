@@ -36,19 +36,17 @@ module.exports.addExpense = async (req, res, next) => {
     res.status(404).send({ err: err });
   }
 };
-module.exports.addExpenseIdToUser = (req, res) => {
+module.exports.addExpenseIdToUser = async (req, res) => {
   const idUser = req.idUser;
   const expenseId = req.expense;
-  userModel.findByIdAndUpdate(
+  const userDoc = await userModel.findByIdAndUpdate(
     idUser,
     { $push: { expenses: expenseId } },
-    { new: true },
-    (err, user) => {
-      if (err) res.status(404).send({ err: err });
-      else if (user) res.status(200).json(req.expense);
-      else res.status(404).send({ err: "not found" });
-    }
+    { new: true }
   );
+  if (userDoc) {
+    res.status(200).json(req.expense);
+  } else res.status(404).send({ err: "not found" });
 };
 
 module.exports.deleteExpense = (req, res, next) => {
@@ -62,34 +60,28 @@ module.exports.deleteExpense = (req, res, next) => {
   });
 };
 
-module.exports.deleteIdExpenseFromUser = (req, res) => {
+module.exports.deleteIdExpenseFromUser = async (req, res) => {
   const idExpense = req.idExpense;
   const idUser = req.idUser;
-  userModel.findByIdAndUpdate(
+  const userDoc = await userModel.findByIdAndUpdate(
     idUser,
     { $pull: { expenses: idExpense } },
-    { new: true },
-    (err, user) => {
-      if (err) res.status(404).send({ err: err });
-      else if (user) res.status(200).json(user);
-      else res.status(404).send({ err: "not found" });
-    }
+    { new: true }
   );
+
+  if (userDoc) {
+    res.status(200).json(userDoc);
+  } else res.status(404).send({ err: "not found" });
 };
 
-module.exports.updateExpense = (req, res) => {
+module.exports.updateExpense = async (req, res) => {
   const expenseId = req.body._id;
-  expenseModel.findByIdAndUpdate(
-    expenseId,
-    req.body,
-    { new: true },
-    (err, expense) => {
-      if (err) res.status(404).send({ err: err });
-      if (expense) {
-        res.status(200).json(expense);
-      } else {
-        res.status(404).send({ err: "error while updating" });
-      }
-    }
-  );
+  const expenseDoc = await expenseModel.findByIdAndUpdate(expenseId, req.body, {
+    new: true,
+  });
+  if (expenseDoc) {
+    res.status(200).json(expenseDoc);
+  } else {
+    res.status(404).send({ err: "error while updating" });
+  }
 };

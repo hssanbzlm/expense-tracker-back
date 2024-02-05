@@ -62,18 +62,18 @@ module.exports.addUser = async (req, res, next) => {
   }
 };
 
-module.exports.activateUser = (req, res) => {
+module.exports.activateUser = async (req, res) => {
   const idUser = req.idUser;
-  userModel.findByIdAndUpdate(
+  const userDoc = await userModel.findByIdAndUpdate(
     idUser,
     { active: true },
-    { new: true },
-    (err, user) => {
-      if (err) res.status(404).send({ err });
-      else if (user) res.status(200).json(user);
-      else res.status(404).send({ err: "not found" });
-    }
+    { new: true }
   );
+  if (userDoc) {
+    res.status(200).json(userDoc);
+  } else {
+    res.status(404).send({ err: "not found" });
+  }
 };
 
 module.exports.findUser = (req, res, next) => {
