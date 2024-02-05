@@ -49,15 +49,15 @@ module.exports.addExpenseIdToUser = async (req, res) => {
   } else res.status(404).send({ err: "not found" });
 };
 
-module.exports.deleteExpense = (req, res, next) => {
+module.exports.deleteExpense = async (req, res, next) => {
   const expenseId = req.params.expenseId;
-  expenseModel.findByIdAndRemove(expenseId, (err, expense) => {
-    if (expense) {
-      req.idExpense = expense._id;
-      next();
-    } else if (err) res.status(404).send({ err: err });
-    else res.status(404).send({ err: "not found" });
-  });
+  const expenseDoc = await expenseModel.findOneAndDelete({ _id: expenseId });
+  if (expenseDoc) {
+    req.idExpense = expenseDoc._id;
+    next();
+  } else {
+    res.status(404).send({ err: "not found" });
+  }
 };
 
 module.exports.deleteIdExpenseFromUser = async (req, res) => {
