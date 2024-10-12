@@ -24,31 +24,33 @@ module.exports.login = async (req, res) => {
   }
 };
 
-module.exports.checkUserExistence = (req, res, next) => {
-  userModel.findOne({ email: req.body.email }, (err, userDoc) => {
-    if (err) res.status(404).send({ err: err });
-    else if (!userDoc) {
+module.exports.checkUserExistence = async (req, res, next) => {
+  try {
+    const doc = await userModel.findOne({ email: req.body.email });
+    if (!doc) {
       next();
     } else {
-      req.idUser = userDoc._id;
+      req.idUser = doc._id;
       next();
     }
-  });
+  } catch (err) {
+    res.status(404).send({ err });
+  }
 };
 
-module.exports.isUserActive = (req, res, next) => {
+module.exports.isUserActive = async (req, res, next) => {
   const email = req.body.email;
-  userModel.findOne({ email: email, active: true }, (err, userDoc) => {
-    if (err) {
-      res.status(404).send({ err: err });
-    }
-    if (userDoc) {
-      req.userId = userDoc._id;
+  try {
+    const doc = await userModel.findOne({ email, active: true });
+    if (doc) {
+      req.userId = doc._id;
       next();
     } else {
       res.status(404).send({ msg: "user is not active" });
     }
-  });
+  } catch (err) {
+    res.status(404).send({ err });
+  }
 };
 
 module.exports.addUser = async (req, res, next) => {
@@ -76,19 +78,19 @@ module.exports.activateUser = async (req, res) => {
   }
 };
 
-module.exports.findUser = (req, res, next) => {
+module.exports.findUser = async (req, res, next) => {
   const email = req.body.email;
-  userModel.findOne({ email: email }, (err, userDoc) => {
-    if (err) {
-      res.status(404).send({ err: err });
-    }
-    if (userDoc) {
-      req.user = userDoc;
+  try {
+    const doc = await userModel.findOne({ email });
+    if (doc) {
+      req.user = doc;
       next();
     } else {
-      res.status(404).send({ err: "err" });
+      res.status(404).send({ res: "User not found" });
     }
-  });
+  } catch (err) {
+    res.status(500).send({ err });
+  }
 };
 
 module.exports.updateUser = async (req, res) => {

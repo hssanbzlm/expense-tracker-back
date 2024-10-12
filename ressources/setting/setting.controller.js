@@ -53,16 +53,18 @@ module.exports.verifCode = (req, res, next) => {
   });
 };
 
-module.exports.checkResetCodeSent = (req, res, next) => {
+module.exports.checkResetCodeSent = async (req, res, next) => {
   const idUser = req.userId;
-  settingModel.findOne({ idUser: idUser }, (err, settDoc) => {
-    if (err) res.status(404).send({ err: err });
-    if (settDoc) {
+  try {
+    const doc = await settingModel.findOne({ idUser });
+    if (doc) {
       res.status(200).send({ msg: "reset code is already sent" });
     } else {
       next();
     }
-  });
+  } catch (err) {
+    res.status(500).send({ err });
+  }
 };
 
 module.exports.sendResetCodeEmail = (req, res, next) => {
