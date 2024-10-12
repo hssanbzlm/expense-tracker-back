@@ -41,16 +41,19 @@ module.exports.senEmailVerification = (req, res, next) => {
   }
 };
 
-module.exports.verifCode = (req, res, next) => {
+module.exports.verifCode = async (req, res, next) => {
   const code = req.params.code;
-  settingModel.findOneAndRemove({ verifCode: code }, (err, setting) => {
-    if (setting) {
-      req.idUser = setting.idUser;
+  try {
+    const doc = await settingModel.findOneAndDelete({ verifCode: code });
+    if (doc) {
+      req.idUser = doc.idUser;
       next();
-    } else if (err) {
-      res.status(404).send({ err });
-    } else res.status(404).send({ err: "not found" });
-  });
+    } else {
+      res.status(404).send("not found");
+    }
+  } catch (err) {
+    res.status(500).send({ err });
+  }
 };
 
 module.exports.checkResetCodeSent = async (req, res, next) => {
@@ -101,15 +104,19 @@ module.exports.addResetCodeSetting = async (req, res) => {
   }
 };
 
-module.exports.checkResetCode = (req, res) => {
+module.exports.checkResetCode = async (req, res) => {
   const resetCode = req.params.resetcode;
   const idUser = req.userId;
-  settingModel.findOneAndDelete(
-    { resetPasswordCode: resetCode, idUser: idUser },
-    (err, setting) => {
-      if (err) res.status(404).send({ err: err });
-      else if (setting) res.status(200).send({ succe: "succee" });
-      else res.status(404).send({ error: "not found" });
+  try {
+    const doc = await settingModel.findOneAndDelete({
+      resetPasswordCode: resetCode,
+      idUser: idUser,
+    });
+    if (doc) res.status(200).send({ succes: "check code has succeed" });
+    else {
+      res.status(404).send({ error: "not found" });
     }
-  );
+  } catch (err) {
+    res.status(500).send({ err });
+  }
 };
